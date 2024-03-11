@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { PerformanceService } from './performance.service';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
-import { UpdatePerformanceDto } from './dto/update-performance.dto';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/users/types/usersRole.type';
 
+@UseGuards(RolesGuard)
 @Controller('performance')
 export class PerformanceController {
   constructor(private readonly performanceService: PerformanceService) {}
 
-  @Post()
-  create(@Body() createPerformanceDto: CreatePerformanceDto) {
-    return this.performanceService.create(createPerformanceDto);
+  @Roles(Role.Admin)
+  @Post('/register')
+  async registerPerformance(@Body() createPerformanceDto: CreatePerformanceDto) {
+    return await this.performanceService.registerPerformance(createPerformanceDto);
   }
+
 
   @Get()
-  findAll() {
-    return this.performanceService.findAll();
+  async getAllPerformances() {
+    return await this.performanceService.getAllPerformances();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.performanceService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePerformanceDto: UpdatePerformanceDto) {
-    return this.performanceService.update(+id, updatePerformanceDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.performanceService.remove(+id);
+  @Get('/search')
+  async getPerformanceByName(@Body() name: string) {
+    return await this.performanceService.getPerformanceByName(name);
   }
 }

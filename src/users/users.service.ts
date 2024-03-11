@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Users } from './entities/users.entity';
 import { JwtPayload } from './types/jwt-payload.interface';
-import { Points } from 'src/points/entities/point.entity';
 import { PointsService } from 'src/points/points.service';
 
 
@@ -39,8 +38,6 @@ export class UsersService {
   
       const hashedPassword = await hash(password, salt); 
       console.log('hashedPassword:', hashedPassword);
-  
-
 
       const user = this.userRepository.create({ 
         email,

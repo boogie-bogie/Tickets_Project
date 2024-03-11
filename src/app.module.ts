@@ -14,6 +14,7 @@ import { PointsModule } from './points/points.module';
 import { Points } from "./points/entities/point.entity";
 import { Performance } from "./performance/entities/performance.entity";
 import { Seats } from "./seats/entities/seat.entity";
+import { CacheModule } from "@nestjs/cache-manager";
 
 
 const typeOrmModuleOptions = {
@@ -47,6 +48,11 @@ const typeOrmModuleOptions = {
         DB_NAME: Joi.string().required(),
         DB_SYNC: Joi.boolean().required(),
       }),
+    }),
+    CacheModule.register({
+      ttl: 60000, // 데이터 캐싱 시간(밀리 초 단위, 1000 = 1초)
+      max: 100, // 최대 캐싱 개수
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
