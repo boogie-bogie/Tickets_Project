@@ -1,6 +1,8 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, OneToMany,OneToOne,PrimaryGeneratedColumn } from 'typeorm';
 
 import { Role } from '../types/usersRole.type';
+
+
 
 @Index('email', ['email'], { unique: true })
 @Entity({
@@ -16,7 +18,7 @@ export class Users {
   @Column({ type: 'varchar', select: false, nullable: false }) 
   password: string;
 
-  @Column({ type: 'varchar', select: false, nullable: false }) 
+  @Column({ type: 'varchar', nullable: false }) 
   name: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.User }) 
@@ -24,4 +26,5 @@ export class Users {
 
   @Column({ type: 'boolean', default: false }) 
   is_admin: boolean;
+
 }

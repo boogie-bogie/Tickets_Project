@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
+
 import { Users } from './entities/users.entity';
 import { UsersService } from './users.service';
 import { GetUserInfo } from 'src/utils/get-user-info.decorator';
@@ -28,13 +29,16 @@ export class UsersController {
       loginDto.email,
       loginDto.password
       );
-  
+  }
+
+  @Get('/:id')
+  async getUserProfile(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.findOneById(id)
   }
 
   @Get('/email')
   @UseGuards(AuthGuard('jwt')) 
   getEmail(@GetUserInfo() user: Users) {
-    console.log("user", user);
     return { email: user.email };
   }
 }

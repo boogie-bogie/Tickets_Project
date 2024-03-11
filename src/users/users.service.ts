@@ -2,7 +2,7 @@ import { compare, hash, genSalt } from 'bcrypt';
 import _ from 'lodash';
 import { Repository } from 'typeorm';
 
-import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -11,6 +11,7 @@ import { JwtPayload } from './types/jwt-payload.interface';
 
 @Injectable()
 export class UsersService {
+
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>, 
@@ -37,7 +38,8 @@ export class UsersService {
         password: hashedPassword,
         name
       });
-
+      // const points = this.pointsRepository.create();
+      // user.points = points;
       await this.userRepository.save(user);
 
     } catch (error) {
@@ -73,8 +75,21 @@ export class UsersService {
       
     }
   }
+  
+  async findOneById(id: number) {
+    const userInfos = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    })
 
-  async findByEmail(email: string) { 
+    if (_.isNil(userInfos)) {
+      throw new NotFoundException(`존재하지 않는 ${id}입니다.`)
+    }
+    return userInfos;
+  }
+
+  async findByEmail(email: string):Promise<Users> { 
     return await this.userRepository.findOneBy({ email });
   }
 }
