@@ -1,6 +1,7 @@
 import { Column, Entity, Index, OneToMany,OneToOne,PrimaryGeneratedColumn } from 'typeorm';
 
 import { Role } from '../types/usersRole.type';
+import { Points } from 'src/points/entities/point.entity';
 
 
 
@@ -27,4 +28,6 @@ export class Users {
   @Column({ type: 'boolean', default: false }) 
   is_admin: boolean;
 
+  @OneToMany(()=> Points, (point) => point.user, { eager: true, cascade: true})
+  points: Points[];
 }

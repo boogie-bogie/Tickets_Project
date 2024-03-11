@@ -8,6 +8,12 @@ import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { AuthModule } from './auth/auth.module';
 import { Users } from "./users/entities/users.entity";
 import { UsersModule } from './users/users.module';
+import { PerformanceModule } from './performance/performance.module';
+import { SeatsModule } from './seats/seats.module';
+import { PointsModule } from './points/points.module';
+import { Points } from "./points/entities/point.entity";
+import { Performance } from "./performance/entities/performance.entity";
+import { Seats } from "./seats/entities/seat.entity";
 
 
 const typeOrmModuleOptions = {
@@ -21,7 +27,7 @@ const typeOrmModuleOptions = {
     host: configService.get("DB_HOST"),
     port: configService.get("DB_PORT"),
     database: configService.get("DB_NAME"),
-    entities: [Users],
+    entities: [Users, Points, Performance, Seats],
     synchronize: configService.get("DB_SYNC"),
     logging: true,
   }),
@@ -45,6 +51,9 @@ const typeOrmModuleOptions = {
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
     UsersModule,
+    PerformanceModule,
+    PointsModule,
+    SeatsModule,
   ],
   controllers: [],
   providers: [],

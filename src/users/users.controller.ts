@@ -7,11 +7,16 @@ import { LoginDto } from './dto/login.dto';
 import { Users } from './entities/users.entity';
 import { UsersService } from './users.service';
 import { GetUserInfo } from 'src/utils/get-user-info.decorator';
+import { PointsService } from 'src/points/points.service';
+
 
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly userService: UsersService) {}
+    private readonly userService: UsersService,
+    private readonly pointsService: PointsService,
+
+    ) {}
 
   @Post('/signup')
   async signup(@Body() createUserDto: CreateUserDto):Promise<void> {

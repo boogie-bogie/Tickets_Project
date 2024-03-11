@@ -8,13 +8,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Users } from './entities/users.entity';
 import { JwtPayload } from './types/jwt-payload.interface';
+import { Points } from 'src/points/entities/point.entity';
+import { PointsService } from 'src/points/points.service';
+
+
 
 @Injectable()
 export class UsersService {
 
   constructor(
     @InjectRepository(Users)
-    private userRepository: Repository<Users>, 
+    private userRepository: Repository<Users>,
+    // @InjectRepository(Points)
+    // private pointsRepository: Repository<Points>,
+    private pointsService: PointsService,
     private readonly jwtService: JwtService, 
   ) {}
 
@@ -33,15 +40,20 @@ export class UsersService {
       const hashedPassword = await hash(password, salt); 
       console.log('hashedPassword:', hashedPassword);
   
+
+
       const user = this.userRepository.create({ 
         email,
         password: hashedPassword,
         name
       });
-      // const points = this.pointsRepository.create();
-      // user.points = points;
       await this.userRepository.save(user);
 
+      // 포인트 생성 및 저장
+      const defaultPoints = 1000000;
+      await this.pointsService.create(defaultPoints, user.id);
+
+      
     } catch (error) {
       console.log("error:", error);
       throw new InternalServerErrorException("회원가입 실패: 서버 에러")
@@ -90,6 +102,6 @@ export class UsersService {
   }
 
   async findByEmail(email: string):Promise<Users> { 
-    return await this.userRepository.findOneBy({ email });
+    return await this.userRepository.findOne({ where: {email }});
   }
 }
