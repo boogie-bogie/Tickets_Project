@@ -21,6 +21,8 @@ export class PointsService {
     return await this.pointsRepository.save(points);
   }
 
+
+  
 }
 /**
  * 포인트 생성(create): 새로운 포인트를 생성하고 저장합니다. 주로 사용자가 회원가입할 때나 특정 이벤트 발생 시에 포인트를 부여하는데 사용됩니다.

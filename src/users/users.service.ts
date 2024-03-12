@@ -1,14 +1,13 @@
 import { compare, hash, genSalt } from 'bcrypt';
 import _ from 'lodash';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Users } from './entities/users.entity';
 import { JwtPayload } from './types/jwt-payload.interface';
-import { PointsService } from 'src/points/points.service';
 import { Points } from 'src/points/entities/point.entity';
 
 

@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { SeatsService } from 'src/seats/seats.service';
 import { CreateSeatsDto } from 'src/seats/dto/create-seat.dto';
 import { SeatsStatus } from 'src/seats/types/seatsRow.type';
+import { Seats } from 'src/seats/entities/seat.entity';
 
 @Injectable()
 export class PerformanceService {
@@ -16,7 +17,6 @@ export class PerformanceService {
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
     private readonly dataSource: DataSource,
-    private readonly seatsService: SeatsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -35,16 +35,45 @@ export class PerformanceService {
 
   async registerPerformance(createPerformanceDto: CreatePerformanceDto) {
 
-    const performance = this.performanceRepository.create(createPerformanceDto);
-    await this.performanceRepository.save(performance);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      // const performance = this.performanceRepository.create(createPerformanceDto);
+      // await this.performanceRepository.save(performance);
+      const performance = queryRunner.manager.getRepository(Performance).create(createPerformanceDto);
+      await queryRunner.manager.getRepository(Performance).save(performance);
+  
+      // 좌석 생성 및 저장
+    const createSeatsDto: CreateSeatsDto = { 
+      status: SeatsStatus.Empty,
+      price: 30000,
+      perf_id: performance.id
+    };
 
-    // 좌석 생성 및 저장
-  const createSeatsDto: CreateSeatsDto = { 
-    status: SeatsStatus.Empty,
-    price: 30000,
-    perf_id: performance.id
-  };
-    await this.seatsService.createSeats(createSeatsDto)
+    const seats: Seats[] = [];
+    console.log('DTO', createSeatsDto)
+    // 좌석 생성
+    for (let i = 0; i < 50; i++) {
+      // const seat = this.seatsRepository.create({
+      const seat = queryRunner.manager.getRepository(Seats).create({
+        ...createSeatsDto
+      });
+      seats.push(seat);
+    }
+    // throw new NotFoundException('트랜잭션 롤백 테스트')
+    console.log('seats for문 끝남', seats)
+    await queryRunner.manager.getRepository(Seats).save(seats);
+    // return await this.seatsRepository.save(seats)
+    // await this.seatsService.createSeats(createSeatsDto)
+      
+      await queryRunner.commitTransaction();
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getAllPerformances() {

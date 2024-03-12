@@ -20,9 +20,9 @@ export class Seats {
 
     @ManyToOne(()=> Tickets, (ticket) => ticket.seats)
     @JoinColumn({name: 'ticket_id', referencedColumnName: 'id'})
-    ticket: Tickets;
+    ticket: Tickets | null;
 
-    @Column({ type: 'bigint', nullable: false }) 
+    @Column({ type: 'bigint', nullable: true }) 
     ticket_id: number;
     
     @ManyToOne(()=> Performance, (performance) => performance.seats)
