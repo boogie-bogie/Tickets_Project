@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Performance } from './entities/performance.entity';
-import { Repository } from 'typeorm';
+import { DataSource, QueryResult, QueryRunner, Repository } from 'typeorm';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import _ from 'lodash';
 import { SeatsService } from 'src/seats/seats.service';
@@ -15,11 +15,26 @@ export class PerformanceService {
   constructor(
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
+    private readonly dataSource: DataSource,
     private readonly seatsService: SeatsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+ /** getRepository
+ * this로 묶인 TypeORM의 Repository - this.performanceRepository를 반환하거나,
+ * Query Runner로부터 만들어낸 Repository - queryRunner.manager.getRepository(Performance)를 반환하는 함수
+ * qr 이라는 매개변수를 전달받는다면 (truthy) -> 쿼리러너로 실행하고,
+ * 그렇지 않으면, 일반 repository로 실행하게 만든다.
+ */
+
+  // getRepository(qr?: QueryRunner) {
+  //   return qr ? qr.manager.getRepository<Performance>(Performance) : this.performanceRepository;
+  // }
+  // const repository = this.getRepository(qr);
+
+
   async registerPerformance(createPerformanceDto: CreatePerformanceDto) {
+
     const performance = this.performanceRepository.create(createPerformanceDto);
     await this.performanceRepository.save(performance);
 

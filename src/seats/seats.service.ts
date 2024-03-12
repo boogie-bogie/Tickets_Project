@@ -15,7 +15,7 @@ export class SeatsService {
 
   async createSeats(createSeatsDto: CreateSeatsDto): Promise<Seats[]>  {
     const seats: Seats[] = [];
-    console.log('DTD', createSeatsDto)
+    console.log('DTO', createSeatsDto)
     // 좌석 생성
     for (let i = 0; i < 50; i++) {
       const seat = this.seatsRepository.create({
