@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSeatDto } from './dto/create-seat.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
+import { CreateSeatsDto } from './dto/create-seat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seats } from './entities/seat.entity';
 import { Repository } from 'typeorm';
+import { SeatsStatus } from './types/seatsRow.type';
 
 @Injectable()
 export class SeatsService {
@@ -13,8 +13,18 @@ export class SeatsService {
     private seatsRepository: Repository<Seats>,
   ) {}
 
-  create(createSeatDto: CreateSeatDto) {
-    return 'This action adds a new seat';
+  async createSeats(createSeatsDto: CreateSeatsDto): Promise<Seats[]>  {
+    const seats: Seats[] = [];
+    console.log('DTD', createSeatsDto)
+    // 좌석 생성
+    for (let i = 0; i < 50; i++) {
+      const seat = this.seatsRepository.create({
+        ...createSeatsDto
+      });
+      seats.push(seat);
+    }
+    console.log('seats for문 끝남', seats)
+    return await this.seatsRepository.save(seats)
   }
 
   findAll() {
@@ -25,11 +35,5 @@ export class SeatsService {
     return `This action returns a #${id} seat`;
   }
 
-  update(id: number, updateSeatDto: UpdateSeatDto) {
-    return `This action updates a #${id} seat`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} seat`;
-  }
 }

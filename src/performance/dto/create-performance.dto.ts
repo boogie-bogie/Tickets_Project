@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, MinLength } from "class-validator";
 import { Category } from "../types/performance-category.type";
 import { StartTime } from "../types/performance-startTime.type";
 
@@ -27,12 +27,17 @@ export class CreatePerformanceDto {
     @IsNotEmpty({ message: '공연 장소를 입력해주세요.' })
     location: string;
   
+    @IsOptional()
+    @IsNumber()
+    @Max(50, { message: '총 좌석 수는 50석을 넘길 수 없습니다.' })
+    totalSeats: number = 50;
+
     @IsDateString({}, { message: '올바른 공연 날짜를 입력해주세요.' })
     @IsNotEmpty({ message: '공연 날짜를 입력해주세요.' })
-    perf_date: Date;
+    perf_date: Date[];
   
     @IsEnum(StartTime, { message: '유효하지 않은 공연 시간입니다.' })
     @IsNotEmpty({ message: '공연 시간을 입력해주세요.'})
-    perf_startTime: StartTime;
+    perf_startTime: StartTime[];
 
 }

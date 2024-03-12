@@ -20,7 +20,7 @@ export class UsersService {
     private userRepository: Repository<Users>,
     // @InjectRepository(Points)
     // private pointsRepository: Repository<Points>,
-    private pointsService: PointsService,
+    private readonly pointsService: PointsService,
     private readonly jwtService: JwtService, 
   ) {}
 
@@ -48,7 +48,7 @@ export class UsersService {
 
       // 포인트 생성 및 저장
       const defaultPoints = 1000000;
-      await this.pointsService.create(defaultPoints, user.id);
+      await this.pointsService.createPoints(defaultPoints, user.id);
 
       
     } catch (error) {

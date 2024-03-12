@@ -1,7 +1,5 @@
-export enum Row {
-    A,
-    B,
-    C,
-    D,
-    E
+export enum SeatsStatus {
+    Empty="Empty",
+    Ticketed="Ticketed"
+
 }

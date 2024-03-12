@@ -15,6 +15,8 @@ import { Points } from "./points/entities/point.entity";
 import { Performance } from "./performance/entities/performance.entity";
 import { Seats } from "./seats/entities/seat.entity";
 import { CacheModule } from "@nestjs/cache-manager";
+import { TicketsModule } from './tickets/tickets.module';
+import { Tickets } from "./tickets/entities/ticket.entity";
 
 
 const typeOrmModuleOptions = {
@@ -28,7 +30,7 @@ const typeOrmModuleOptions = {
     host: configService.get("DB_HOST"),
     port: configService.get("DB_PORT"),
     database: configService.get("DB_NAME"),
-    entities: [Users, Points, Performance, Seats],
+    entities: [Users, Points, Performance, Seats, Tickets],
     synchronize: configService.get("DB_SYNC"),
     logging: true,
   }),
@@ -60,6 +62,7 @@ const typeOrmModuleOptions = {
     PerformanceModule,
     PointsModule,
     SeatsModule,
+    TicketsModule,
   ],
   controllers: [],
   providers: [],

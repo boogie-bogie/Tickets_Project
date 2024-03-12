@@ -10,10 +10,10 @@ export class PointsService {
 
   constructor(
     @InjectRepository(Points)
-    private readonly pointsRepository: Repository<Points>,
+    private pointsRepository: Repository<Points>,
   ){}
 
-  async create(amount: number, userId: number): Promise<Points> {
+  async createPoints(amount: number, userId: number): Promise<Points> {
     const points = this.pointsRepository.create({
       amount,
       user_id: userId,
