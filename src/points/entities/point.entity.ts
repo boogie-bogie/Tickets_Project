@@ -17,6 +17,7 @@ export class Points {
   createdAt: Date;
 
   @ManyToOne(()=> Users, (user) => user.points)
+  @JoinColumn({name: 'user_id', referencedColumnName: 'id'})
   user: Users;
 
   @Column({type: 'bigint', name: 'user_id'})

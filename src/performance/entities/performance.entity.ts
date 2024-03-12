@@ -42,7 +42,10 @@ export class Performance {
   seats: Seats[];
 
   @ManyToOne(()=> Tickets, (ticket) => ticket.performances)
-  @JoinColumn({name: 'ticket_id'})
+  @JoinColumn({name: 'ticket_id', referencedColumnName: 'id'})
   ticket: Tickets;
+
+  @Column({ type: 'bigint', nullable: false }) 
+  ticket_id: number;
 
 }
