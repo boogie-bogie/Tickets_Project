@@ -5,19 +5,18 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from "./auth/auth.module";
 import { Users } from "./users/entities/users.entity";
-import { UsersModule } from './users/users.module';
-import { PerformanceModule } from './performance/performance.module';
-import { SeatsModule } from './seats/seats.module';
-import { PointsModule } from './points/points.module';
+import { UsersModule } from "./users/users.module";
+import { PerformanceModule } from "./performance/performance.module";
+import { SeatsModule } from "./seats/seats.module";
+import { PointsModule } from "./points/points.module";
 import { Points } from "./points/entities/point.entity";
 import { Performance } from "./performance/entities/performance.entity";
 import { Seats } from "./seats/entities/seat.entity";
 import { CacheModule } from "@nestjs/cache-manager";
-import { TicketsModule } from './tickets/tickets.module';
+import { TicketsModule } from "./tickets/tickets.module";
 import { Tickets } from "./tickets/entities/ticket.entity";
-
 
 const typeOrmModuleOptions = {
   useFactory: async (

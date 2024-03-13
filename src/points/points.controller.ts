@@ -1,10 +1,7 @@
-import { Controller } from '@nestjs/common';
-import { PointsService } from './points.service';
+import { Controller } from "@nestjs/common";
+import { PointsService } from "./points.service";
 
-
-@Controller('points')
+@Controller("points")
 export class PointsController {
   constructor(private pointsService: PointsService) {}
-
-
 }

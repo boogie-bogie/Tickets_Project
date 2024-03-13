@@ -1,5 +1,4 @@
 export enum SeatsStatus {
-    Empty="Empty",
-    Ticketed="Ticketed"
-
+  Empty = "Empty",
+  Ticketed = "Ticketed",
 }

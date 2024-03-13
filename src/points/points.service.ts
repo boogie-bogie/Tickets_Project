@@ -1,17 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 
-import { Points } from './entities/point.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import _ from 'lodash';
+import { Points } from "./entities/point.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import _ from "lodash";
 
 @Injectable()
 export class PointsService {
-
   constructor(
     @InjectRepository(Points)
     private pointsRepository: Repository<Points>,
-  ){}
+  ) {}
 
   async createPoints(amount: number, userId: number): Promise<Points> {
     const points = this.pointsRepository.create({
@@ -20,9 +19,6 @@ export class PointsService {
     });
     return await this.pointsRepository.save(points);
   }
-
-
-  
 }
 /**
  * 포인트 생성(create): 새로운 포인트를 생성하고 저장합니다. 주로 사용자가 회원가입할 때나 특정 이벤트 발생 시에 포인트를 부여하는데 사용됩니다.

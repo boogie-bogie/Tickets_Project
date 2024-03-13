@@ -1,26 +1,26 @@
-import { Role } from 'src/users/types/usersRole.type';
+import { Role } from "src/users/types/usersRole.type";
 
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
 
 @Injectable()
-export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(private reflector: Reflector) { 
+export class RolesGuard extends AuthGuard("jwt") implements CanActivate {
+  constructor(private reflector: Reflector) {
     super();
   }
 
-  async canActivate(context: ExecutionContext) { 
-    const authenticated = await super.canActivate(context); 
-    if (!authenticated) { 
+  async canActivate(context: ExecutionContext) {
+    const authenticated = await super.canActivate(context);
+    if (!authenticated) {
       return false;
     }
 
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>("roles", [
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles) { 
+    if (!requiredRoles) {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
