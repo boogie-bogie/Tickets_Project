@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -16,21 +17,25 @@ import { LoginDto } from "./dto/login.dto";
 import { Users } from "./entities/users.entity";
 import { UsersService } from "./users.service";
 import { GetUserInfo } from "src/utils/get-user-info.decorator";
-import { PointsService } from "src/points/points.service";
+import { TransactionInterceptor } from "src/utils/transaction-interceptor";
+import { TransactionManager } from "src/utils/transaction-manager.decorator";
+import { EntityManager } from "typeorm";
 
 @Controller("users")
 export class UsersController {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly pointsService: PointsService,
-  ) {}
+  constructor(private readonly userService: UsersService) {}
 
   @Post("/signup")
-  async signup(@Body() createUserDto: CreateUserDto): Promise<void> {
+  @UseInterceptors(TransactionInterceptor)
+  async signup(
+    @TransactionManager() transactionManager: EntityManager,
+    @Body() createUserDto: CreateUserDto,
+  ) {
     return await this.userService.signup(
       createUserDto.email,
       createUserDto.password,
       createUserDto.name,
+      transactionManager,
     );
   }
 

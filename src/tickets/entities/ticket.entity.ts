@@ -2,20 +2,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Status } from "../types/tickekts-status.type";
-import { Seats } from "src/seats/entities/seat.entity";
+import { Seats } from "src/performance/entities/seat.entity";
 import { Performance } from "src/performance/entities/performance.entity";
 
 @Entity({ name: "tickets" })
 export class Tickets {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ type: "enum", enum: Status, nullable: false })
-  status: Status;
 
   @CreateDateColumn()
   createdAt: Date;

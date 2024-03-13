@@ -1,14 +1,22 @@
-import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { CreatePerformanceDto } from "./dto/create-performance.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Performance } from "./entities/performance.entity";
-import { DataSource, QueryResult, QueryRunner, Repository } from "typeorm";
-import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
 import _ from "lodash";
-import { SeatsService } from "src/seats/seats.service";
-import { CreateSeatsDto } from "src/seats/dto/create-seat.dto";
-import { SeatsStatus } from "src/seats/types/seatsRow.type";
-import { Seats } from "src/seats/entities/seat.entity";
+
+import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
+
+import { Performance } from "./entities/performance.entity";
+import { CreatePerformanceDto } from "./dto/create-performance.dto";
+
+import { SeatsStatus } from "src/performance/types/seatsRow.type";
+import { Seats } from "src/performance/entities/seat.entity";
+import { CreateSeatsDto } from "src/performance/dto/create-seat.dto";
 
 @Injectable()
 export class PerformanceService {
@@ -16,62 +24,79 @@ export class PerformanceService {
   constructor(
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
-    private readonly dataSource: DataSource,
+    @InjectRepository(Seats)
+    private seatsRepository: Repository<Seats>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  /** getRepository
-   * this로 묶인 TypeORM의 Repository - this.performanceRepository를 반환하거나,
-   * Query Runner로부터 만들어낸 Repository - queryRunner.manager.getRepository(Performance)를 반환하는 함수
-   * qr 이라는 매개변수를 전달받는다면 (truthy) -> 쿼리러너로 실행하고,
-   * 그렇지 않으면, 일반 repository로 실행하게 만든다.
-   */
+  // async registerPerformance(createPerformanceDto: CreatePerformanceDto, transactionManager: EntityManager) {
 
-  // getRepository(qr?: QueryRunner) {
-  //   return qr ? qr.manager.getRepository<Performance>(Performance) : this.performanceRepository;
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  //   try {
+  //     const performance = queryRunner.manager.getRepository(Performance).create(createPerformanceDto);
+  //     await queryRunner.manager.getRepository(Performance).save(performance);
+
+  //     const createSeatsDto: CreateSeatsDto = {
+  //       status: SeatsStatus.Empty,
+  //       price: 30000,
+  //       perf_id: performance.id
+  //     };
+
+  //     const seats: Seats[] = [];
+  //     console.log('DTO', createSeatsDto)
+
+  //     for (let i = 0; i < 50; i++) {
+  //       const seat = queryRunner.manager.getRepository(Seats).create({
+  //         ...createSeatsDto
+  //       });
+  //       seats.push(seat);
+  //     }
+  //     // throw new NotFoundException('트랜잭션 롤백 테스트')
+  //     console.log('seats for문 끝남', seats)
+  //     await queryRunner.manager.getRepository(Seats).save(seats);
+
+  //     await queryRunner.commitTransaction();
+
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
   // }
-  // const repository = this.getRepository(qr);
 
-  async registerPerformance(createPerformanceDto: CreatePerformanceDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  async registerPerformance(
+    createPerformanceDto: CreatePerformanceDto,
+    transactionManager: EntityManager,
+  ) {
     try {
-      // const performance = this.performanceRepository.create(createPerformanceDto);
-      // await this.performanceRepository.save(performance);
-      const performance = queryRunner.manager
-        .getRepository(Performance)
-        .create(createPerformanceDto);
-      await queryRunner.manager.getRepository(Performance).save(performance);
+      const performance = transactionManager.create(
+        Performance,
+        createPerformanceDto,
+      );
+      await transactionManager.save(performance);
 
-      // 좌석 생성 및 저장
       const createSeatsDto: CreateSeatsDto = {
         status: SeatsStatus.Empty,
         price: 30000,
         perf_id: performance.id,
       };
-
       const seats: Seats[] = [];
-      console.log("DTO", createSeatsDto);
-      // 좌석 생성
-      for (let i = 0; i < 50; i++) {
-        // const seat = this.seatsRepository.create({
-        const seat = queryRunner.manager.getRepository(Seats).create({
-          ...createSeatsDto,
-        });
+
+      for (let i = 0; i < createPerformanceDto.totalSeats; i++) {
+        const seat = transactionManager.create(Seats, createSeatsDto);
         seats.push(seat);
       }
-      // throw new NotFoundException('트랜잭션 롤백 테스트')
-      console.log("seats for문 끝남", seats);
-      await queryRunner.manager.getRepository(Seats).save(seats);
-      // return await this.seatsRepository.save(seats)
-      // await this.seatsService.createSeats(createSeatsDto)
 
-      await queryRunner.commitTransaction();
+      await transactionManager.save(seats);
+      //throw new NotFoundException('트랜잭션 롤백 테스트')
+
+      return { message: "공연 등록에 성공하였습니다." };
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
+      throw new InternalServerErrorException(
+        "공연 등록 중 오류가 발생했습니다.",
+      );
     }
   }
 
@@ -89,19 +114,55 @@ export class PerformanceService {
     return performances;
   }
 
-  async getPerformanceByName(name: string) {
-    const performanceInfos = await this.performanceRepository.findOne({
-      where: {
-        name,
-      },
+  async getPerformanceByName(name: string): Promise<Performance> {
+    const performanceInfo = await this.performanceRepository.findOne({
+      where: { name },
     });
-    if (_.isNil(performanceInfos)) {
+    if (!performanceInfo) {
       throw new NotFoundException(`존재하지 않는 ${name}입니다.`);
     }
-    /**
-     * const seats = this.seatsService.findOneByPerfId(performanceInfos.id)
-     * return { ...performanceInfos, seats }
+    return performanceInfo;
+  }
+
+  async getPerformanceDetails(id: number): Promise<any> {
+    const performance = await this.performanceRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!performance) {
+      throw new NotFoundException("해당 공연을 찾을 수 없습니다.");
+    }
+
+    // 예약 가능한 좌석 수를 조회
+    const seats = await this.seatsRepository.find({
+      where: { perf_id: id, ticket_id: null },
+    });
+
+    /**예약 가능한 좌석의 id와 price를 배열 형태로 매핑해서 가져온다.
+     * 예시 - 등급은 제외
+     * [ { seat_num: 32, grade: B, price: 30000}, { seat_num: 290, grade: A, price: 40000}, … ]
      */
-    return performanceInfos;
+    const isAvailableSeatsInfo = seats.map((seat) => ({
+      id: seat.id,
+      price: seat.price,
+    }));
+
+    const message = ` 공연명: '${performance.name}', 현재 ${seats.length}석 예매 가능`;
+
+    return {
+      message: message,
+      data: {
+        id: performance.id,
+        name: performance.name,
+        category: performance.category,
+        image: performance.image,
+        location: performance.location,
+        perf_startTime: performance.perf_startTime,
+        AvailableSeatsCount: seats.length,
+        AvailableSeatsInfo: isAvailableSeatsInfo,
+      },
+    };
   }
 }

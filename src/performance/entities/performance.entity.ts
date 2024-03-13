@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Category } from "../types/performance-category.type";
 import { StartTime } from "../types/performance-startTime.type";
-import { Seats } from "src/seats/entities/seat.entity";
+import { Seats } from "src/performance/entities/seat.entity";
 import { Tickets } from "src/tickets/entities/ticket.entity";
 
 @Entity({
