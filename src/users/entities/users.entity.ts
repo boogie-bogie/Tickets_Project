@@ -3,12 +3,12 @@ import {
   Entity,
   Index,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { Role } from "../types/usersRole.type";
 import { Points } from "src/points/entities/point.entity";
+import { Tickets } from "src/tickets/entities/ticket.entity";
 
 @Index("email", ["email"], { unique: true })
 @Entity({
@@ -38,4 +38,10 @@ export class Users {
     cascade: true,
   })
   points: Points[];
+
+  @OneToMany(() => Tickets, (ticket) => ticket.user, {
+    eager: true,
+    cascade: true,
+  })
+  tickets: Tickets[];
 }

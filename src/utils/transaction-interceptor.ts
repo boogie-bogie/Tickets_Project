@@ -31,8 +31,9 @@ export class TransactionInterceptor implements NestInterceptor {
 
         if (error instanceof HttpException) {
           throw new HttpException(error.getResponse(), error.getStatus());
+        } else {
+          throw new InternalServerErrorException();
         }
-        throw new InternalServerErrorException();
       }),
       tap(async () => {
         await queryRunner.commitTransaction();

@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, EntityManager, Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 
 import { Performance } from "./entities/performance.entity";
 import { CreatePerformanceDto } from "./dto/create-performance.dto";
@@ -28,43 +28,6 @@ export class PerformanceService {
     private seatsRepository: Repository<Seats>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-
-  // async registerPerformance(createPerformanceDto: CreatePerformanceDto, transactionManager: EntityManager) {
-
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
-  //   try {
-  //     const performance = queryRunner.manager.getRepository(Performance).create(createPerformanceDto);
-  //     await queryRunner.manager.getRepository(Performance).save(performance);
-
-  //     const createSeatsDto: CreateSeatsDto = {
-  //       status: SeatsStatus.Empty,
-  //       price: 30000,
-  //       perf_id: performance.id
-  //     };
-
-  //     const seats: Seats[] = [];
-  //     console.log('DTO', createSeatsDto)
-
-  //     for (let i = 0; i < 50; i++) {
-  //       const seat = queryRunner.manager.getRepository(Seats).create({
-  //         ...createSeatsDto
-  //       });
-  //       seats.push(seat);
-  //     }
-  //     // throw new NotFoundException('트랜잭션 롤백 테스트')
-  //     console.log('seats for문 끝남', seats)
-  //     await queryRunner.manager.getRepository(Seats).save(seats);
-
-  //     await queryRunner.commitTransaction();
-
-  //   } catch (error) {
-  //     await queryRunner.rollbackTransaction();
-  //   } finally {
-  //     await queryRunner.release();
-  //   }
-  // }
 
   async registerPerformance(
     createPerformanceDto: CreatePerformanceDto,
@@ -137,7 +100,7 @@ export class PerformanceService {
 
     // 예약 가능한 좌석 수를 조회
     const seats = await this.seatsRepository.find({
-      where: { perf_id: id, ticket_id: null },
+      where: { perf_id: id, ticket_id: null, status: SeatsStatus.Empty },
     });
 
     /**예약 가능한 좌석의 id와 price를 배열 형태로 매핑해서 가져온다.

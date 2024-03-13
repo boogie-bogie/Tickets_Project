@@ -9,5 +9,6 @@ import { Seats } from "src/performance/entities/seat.entity";
   imports: [TypeOrmModule.forFeature([Performance, Seats])],
   controllers: [PerformanceController],
   providers: [PerformanceService],
+  exports: [PerformanceService],
 })
 export class PerformanceModule {}

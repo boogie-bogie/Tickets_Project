@@ -1,6 +1,6 @@
 import { compare, hash, genSalt } from "bcrypt";
 import _ from "lodash";
-import { DataSource, EntityManager, Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 
 import {
   ConflictException,
@@ -21,50 +21,9 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
-    private readonly dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
 
-  // async signup(email: string, password: string, name: string): Promise<void> {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
-
-  //   const existingUser = await this.findByEmail(email);
-  //   if (existingUser) {
-  //     throw new ConflictException( // 409 중복 가입
-  //       "이미 해당 이메일로 가입된 사용자가 있습니다!",
-  //     );
-  //   }
-
-  //   const salt = await genSalt();
-  //   console.log("salt:", salt);
-  //   const hashedPassword = await hash(password, salt);
-  //   console.log("hashedPassword:", hashedPassword);
-
-  //   try {
-  //     const user = queryRunner.manager.getRepository(Users).create({
-  //       email,
-  //       password: hashedPassword,
-  //       name,
-  //     });
-  //     await queryRunner.manager.getRepository(Users).save(user);
-  //     // throw new NotFoundException('트랜잭션 롤백 테스트 - 에러 던지기')
-
-  //     const defaultPoints = 1000000;
-  //     await queryRunner.manager.getRepository(Points).save({
-  //       amount: defaultPoints,
-  //       user_id: user.id,
-  //     });
-
-  //     await queryRunner.commitTransaction();
-  //   } catch (error) {
-  //     await queryRunner.rollbackTransaction();
-  //     console.log("error:", error);
-  //   } finally {
-  //     await queryRunner.release();
-  //   }
-  // }
   async signup(
     email: string,
     password: string,

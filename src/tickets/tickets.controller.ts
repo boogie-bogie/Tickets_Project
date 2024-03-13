@@ -1,42 +1,36 @@
 import {
   Controller,
-  Get,
   Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { TicketsService } from "./tickets.service";
-import { CreateTicketDto } from "./dto/create-ticket.dto";
-import { UpdateTicketDto } from "./dto/update-ticket.dto";
+import { Users } from "src/users/entities/users.entity";
+import { GetUserInfo } from "src/utils/get-user-info.decorator";
+import { RolesGuard } from "src/auth/roles.guard";
+import { TransactionManager } from "src/utils/transaction-manager.decorator";
+import { TransactionInterceptor } from "src/utils/transaction-interceptor";
+import { EntityManager } from "typeorm";
 
+@UseGuards(RolesGuard)
 @Controller("tickets")
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
-  @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketsService.create(createTicketDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.ticketsService.findAll();
-  }
-
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.ticketsService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateTicketDto: UpdateTicketDto) {
-    return this.ticketsService.update(+id, updateTicketDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.ticketsService.remove(+id);
+  @Post(":performanceId/:seatId")
+  @UseInterceptors(TransactionInterceptor)
+  async createTickets(
+    @TransactionManager() transactionManager: EntityManager,
+    @Param("performanceId") performanceId: number,
+    @Param("seatId") seatId: number,
+    @GetUserInfo() user: Users,
+  ) {
+    return await this.ticketsService.createTickets(
+      performanceId,
+      seatId,
+      user,
+      transactionManager,
+    );
   }
 }
