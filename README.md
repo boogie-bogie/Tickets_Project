@@ -9,10 +9,10 @@
 👉🏼 **[ DrawSQL ERD ]** https://drawsql.app/teams/1-524/diagrams/-4
 <br>
 
-👉🏼 **[ Notion API 명세서 ]** https://kbworks.notion.site/API-dc990d2a5c13453e9c8ff18bb683a68a?pvs=4
+👉🏼 **[ Github ]** https://github.com/boogie-bogie/Tickets_Project
 <br>
 
-👉🏼 **[ Github ]** https://github.com/boogie-bogie/Tickets_Project
+👉🏼 **[ Swaagger API 명세서 ]**
 
 <br>
 
@@ -30,7 +30,19 @@
 
 ```bash
 .
-├── .env
+├── src
+│   ├── auth
+│   ├── performance
+│   ├── points
+│   ├── tickets
+│   ├── users
+│   ├── utils
+│   ├── app.module.ts
+│   └── main.ts
+├── test
+│   ├── unit
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
 ├── .eslintrc.js
 ├── .gitignore
 ├── .prettierrc
@@ -62,5 +74,3 @@
 1. synchronize를 true할 경우 테이블락을 잡고 스키마를 변경하는 경우가 다수 존재합니다. 운영에서는 켜고 개발/테스트 환경에서는 끄는 것 보다는 끄고 사용하는것을 생활화하는게 좋습니다.
 
 2. Class로 전환하는 과정에서 클래스만 export할 수 없다. 는 잘못된 내용입니다. Class만 export할 수 있고 import 하는곳에서 인스턴스를 생성해서 사용할 수 있습니다. 인스턴스를 생성해서 export하는것과 import 하는쪽에서 생성하는것의 차이는 무엇이 있고 메모리 관점에서는 어떤 차이가 있을까요?
-
-# Tickets_Project

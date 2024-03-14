@@ -20,11 +20,20 @@ import { GetUserInfo } from "src/utils/get-user-info.decorator";
 import { TransactionInterceptor } from "src/utils/transaction-interceptor";
 import { TransactionManager } from "src/utils/transaction-manager.decorator";
 import { EntityManager } from "typeorm";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from "@nestjs/swagger";
 
+@ApiTags("Users")
 @Controller("users")
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  @ApiOperation({ summary: "회원가입 API" })
   @Post("/signup")
   @UseInterceptors(TransactionInterceptor)
   async signup(
@@ -39,6 +48,7 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: "로그인 API" })
   @Post("/login")
   async login(
     @Body() loginDto: LoginDto,
@@ -46,11 +56,14 @@ export class UsersController {
     return await this.userService.login(loginDto.email, loginDto.password);
   }
 
+  @ApiOperation({ summary: "사용자 정보 조회 API" })
+  @ApiParam({ name: "id", required: true, description: "user_id" })
   @Get("/:id")
   async getUserProfile(@Param("id", ParseIntPipe) id: number) {
     return await this.userService.findOneById(id);
   }
-
+  @ApiBearerAuth("access-token")
+  @ApiOperation({ summary: "email로 인증 테스트 API" })
   @Get("/email")
   @UseGuards(AuthGuard("jwt"))
   getEmail(@GetUserInfo() user: Users) {

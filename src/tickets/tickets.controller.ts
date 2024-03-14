@@ -13,13 +13,27 @@ import { RolesGuard } from "src/auth/roles.guard";
 import { TransactionManager } from "src/utils/transaction-manager.decorator";
 import { TransactionInterceptor } from "src/utils/transaction-interceptor";
 import { EntityManager } from "typeorm";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from "@nestjs/swagger";
 
+@ApiTags("Tickets")
 @UseGuards(RolesGuard)
 @Controller("tickets")
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
-  // 공연 좌석 지정하여 예매 API
+  @ApiBearerAuth("access-token")
+  @ApiOperation({ summary: "공연 좌석 지정하여 예매 API" })
+  @ApiParam({
+    name: "performanceId",
+    required: true,
+    description: "performanceId",
+  })
+  @ApiParam({ name: "seatId", required: true, description: "seatId" })
   @Post(":performanceId/:seatId")
   @UseInterceptors(TransactionInterceptor)
   async createTickets(
@@ -36,7 +50,8 @@ export class TicketsController {
     );
   }
 
-  // userId의 예매 내역 목록 조회 API
+  @ApiBearerAuth("access-token")
+  @ApiOperation({ summary: "userId의 예매 내역 목록 조회 API" })
   @Get("/history")
   async getTicketsHistory(@GetUserInfo() user: Users) {
     return await this.ticketsService.getTicketsHistory(user);
