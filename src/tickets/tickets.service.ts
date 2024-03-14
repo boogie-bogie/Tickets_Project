@@ -87,7 +87,18 @@ export class TicketsService {
       });
       await transactionManager.save(newTicket);
 
-      return { message: "예매가 완료되었습니다." };
+      return {
+        message: "예매가 완료되었습니다.",
+        data: {
+          id: newTicket.id,
+          name: targetPerformance.name,
+          category: targetPerformance.category,
+          seat_id: targetSeat.id,
+          seat_price: targetSeat.price,
+          location: targetPerformance.location,
+          perf_startTime: targetPerformance.perf_startTime,
+        },
+      };
     } catch (error) {
       if (
         error instanceof NotFoundException ||
@@ -98,6 +109,19 @@ export class TicketsService {
         throw new InternalServerErrorException("예매 중 오류가 발생했습니다.");
       }
     }
+  }
+
+  async getTicketsHistory(user: Users) {
+    const ticketsHistory = await this.ticketsRepository.find({
+      where: {
+        user_id: user.id,
+      },
+      order: {
+        createdAt: "DESC",
+      },
+    });
+
+    return ticketsHistory;
   }
 }
 

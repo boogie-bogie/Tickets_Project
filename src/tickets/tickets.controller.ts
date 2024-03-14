@@ -4,6 +4,7 @@ import {
   Param,
   UseGuards,
   UseInterceptors,
+  Get,
 } from "@nestjs/common";
 import { TicketsService } from "./tickets.service";
 import { Users } from "src/users/entities/users.entity";
@@ -18,6 +19,7 @@ import { EntityManager } from "typeorm";
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
+  // 공연 좌석 지정하여 예매 API
   @Post(":performanceId/:seatId")
   @UseInterceptors(TransactionInterceptor)
   async createTickets(
@@ -32,5 +34,11 @@ export class TicketsController {
       user,
       transactionManager,
     );
+  }
+
+  // userId의 예매 내역 목록 조회 API
+  @Get("/history")
+  async getTicketsHistory(@GetUserInfo() user: Users) {
+    return await this.ticketsService.getTicketsHistory(user);
   }
 }
