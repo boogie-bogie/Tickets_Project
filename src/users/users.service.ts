@@ -1,4 +1,4 @@
-import { compare, hashSync, genSaltSync } from "bcrypt";
+import { compare, hash, genSalt } from "bcrypt";
 import _ from "lodash";
 import { EntityManager, Repository } from "typeorm";
 
@@ -40,8 +40,8 @@ export class UsersService {
     }
 
     const saltRounds = this.configService.get<number>("PASSWORD_SALT_ROUNDS");
-    const salt = await genSaltSync(saltRounds);
-    const hashedPassword = await hashSync(password, salt);
+    const salt = await genSalt(saltRounds);
+    const hashedPassword = await hash(password, salt);
 
     try {
       const user = transactionManager.create(Users, {
