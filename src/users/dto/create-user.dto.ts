@@ -8,6 +8,10 @@ import {
 } from "class-validator";
 
 export class CreateUserDto {
+  /**
+   * 이메일
+   * @example "example@example.com"
+   */
   @ApiProperty({
     example: "test@gmail.com",
     description: "이메일",

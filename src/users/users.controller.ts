@@ -33,6 +33,12 @@ import {
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  /**
+   * 회원가입
+   * @param transactionManager
+   * @param createUserDto
+   * @returns
+   */
   @ApiOperation({ summary: "회원가입 API" })
   @Post("/signup")
   @UseInterceptors(TransactionInterceptor)

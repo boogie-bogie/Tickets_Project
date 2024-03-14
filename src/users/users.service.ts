@@ -1,4 +1,4 @@
-import { compare, hash, genSalt } from "bcrypt";
+import { compare, hashSync, genSaltSync } from "bcrypt";
 import _ from "lodash";
 import { EntityManager, Repository } from "typeorm";
 
@@ -15,10 +15,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entities/users.entity";
 import { JwtPayload } from "./types/jwt-payload.interface";
 import { Points } from "src/points/entities/point.entity";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
@@ -37,8 +39,9 @@ export class UsersService {
       );
     }
 
-    const salt = await genSalt();
-    const hashedPassword = await hash(password, salt);
+    const saltRounds = this.configService.get<number>("PASSWORD_SALT_ROUNDS");
+    const salt = await genSaltSync(saltRounds);
+    const hashedPassword = await hashSync(password, salt);
 
     try {
       const user = transactionManager.create(Users, {
