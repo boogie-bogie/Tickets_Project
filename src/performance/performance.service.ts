@@ -56,7 +56,7 @@ export class PerformanceService {
       await transactionManager.save(seats);
       //throw new NotFoundException('트랜잭션 롤백 테스트')
 
-      return { message: "공연 등록에 성공하였습니다." };
+      return performance;
     } catch (error) {
       throw new InternalServerErrorException(
         "공연 등록 중 오류가 발생했습니다.",

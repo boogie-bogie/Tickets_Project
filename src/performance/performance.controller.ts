@@ -67,10 +67,16 @@ export class PerformanceController {
     @TransactionManager() transactionManager: EntityManager,
     @Body() createPerformanceDto: CreatePerformanceDto,
   ) {
-    return await this.performanceService.registerPerformance(
+    const data = await this.performanceService.registerPerformance(
       createPerformanceDto,
       transactionManager,
     );
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "공연 등록 및 좌석 생성에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiOperation({ summary: "공연 목록 조회 API" })
