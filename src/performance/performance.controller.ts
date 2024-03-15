@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   UseInterceptors,
+  HttpStatus,
 } from "@nestjs/common";
 import { PerformanceService } from "./performance.service";
 import { CreatePerformanceDto } from "./dto/create-performance.dto";
@@ -25,6 +26,7 @@ import {
   ApiRequestTimeoutResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { FindAllPerformancesDto } from "./dto/findAll-performance.dto";
 
 @ApiTags("Performance")
 @UseGuards(RolesGuard)
@@ -70,11 +72,22 @@ export class PerformanceController {
       transactionManager,
     );
   }
+
   @ApiOperation({ summary: "공연 목록 조회 API" })
   @ApiBearerAuth("access-token")
   @Get()
-  async getAllPerformances() {
-    return await this.performanceService.getAllPerformances();
+  async getAllPerformances(
+    @Query() findAllPerformancesDto: FindAllPerformancesDto,
+  ) {
+    const data = await this.performanceService.getAllPerformances(
+      findAllPerformancesDto,
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: "공연 목록 조회에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiOperation({ summary: "공연명으로 공연 정보 조회 API" })

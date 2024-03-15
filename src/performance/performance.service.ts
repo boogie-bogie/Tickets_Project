@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EntityManager, Repository } from "typeorm";
+import { EntityManager, Like, Repository } from "typeorm";
 
 import { Performance } from "./entities/performance.entity";
 import { CreatePerformanceDto } from "./dto/create-performance.dto";
@@ -17,6 +17,7 @@ import { CreatePerformanceDto } from "./dto/create-performance.dto";
 import { SeatsStatus } from "src/performance/types/seatsRow.type";
 import { Seats } from "src/performance/entities/seat.entity";
 import { CreateSeatsDto } from "src/performance/dto/create-seat.dto";
+import { FindAllPerformancesDto } from "./dto/findAll-performance.dto";
 
 @Injectable()
 export class PerformanceService {
@@ -63,7 +64,7 @@ export class PerformanceService {
     }
   }
 
-  async getAllPerformances() {
+  async getAllPerformances({ keyword, category }: FindAllPerformancesDto) {
     const cachePerformances = await this.cacheManager.get("performances");
     if (!_.isNil(cachePerformances)) {
       this.logger.log("cache Hit:");
@@ -71,7 +72,12 @@ export class PerformanceService {
     }
 
     this.logger.log("cache Miss:");
-    const performances = await this.performanceRepository.find();
+    const performances = await this.performanceRepository.find({
+      where: {
+        ...(keyword && { name: Like(`%${keyword}%`) }),
+        ...(category && { category }),
+      },
+    });
 
     await this.cacheManager.set("performances", performances);
     return performances;
