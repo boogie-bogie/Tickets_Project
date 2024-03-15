@@ -95,7 +95,12 @@ export class PerformanceController {
   @ApiQuery({ name: "name", required: true, description: "performance_name" })
   @Get("/search")
   async getPerformanceByName(@Query("name") name: string) {
-    return await this.performanceService.getPerformanceByName(name);
+    const data = await this.performanceService.getPerformanceByName(name);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "공연 정보 조회에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiOperation({
