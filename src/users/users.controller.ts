@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -66,7 +67,12 @@ export class UsersController {
   @ApiParam({ name: "id", required: true, description: "user_id" })
   @Get("/:id")
   async getUserProfile(@Param("id", ParseIntPipe) id: number) {
-    return await this.userService.findOneById(id);
+    const data = await this.userService.findOneById(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "사용자 정보 조회에 성공하였습니다.",
+      data,
+    };
   }
   @ApiBearerAuth("access-token")
   @ApiOperation({ summary: "email로 인증 테스트 API" })

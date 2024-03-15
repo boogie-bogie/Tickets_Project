@@ -4,7 +4,7 @@ import {
   TypeOrmModuleOptions,
 } from "@nestjs/typeorm";
 import { Seats } from "src/performance/entities/seat.entity";
-import { Points } from "src/points/entities/point.entity";
+import { Points } from "src/users/entities/point.entity";
 import { Tickets } from "src/tickets/entities/ticket.entity";
 import { Users } from "src/users/entities/users.entity";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";

@@ -14,7 +14,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { Users } from "./entities/users.entity";
 import { JwtPayload } from "./types/jwt-payload.interface";
-import { Points } from "src/points/entities/point.entity";
+import { Points } from "src/users/entities/point.entity";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()

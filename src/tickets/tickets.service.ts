@@ -10,7 +10,7 @@ import { Repository, EntityManager } from "typeorm";
 import { Tickets } from "./entities/ticket.entity";
 import { Users } from "src/users/entities/users.entity";
 import { Seats } from "src/performance/entities/seat.entity";
-import { Points } from "src/points/entities/point.entity";
+import { Points } from "src/users/entities/point.entity";
 import { SeatsStatus } from "src/performance/types/seatsRow.type";
 import { Performance } from "src/performance/entities/performance.entity";
 
@@ -88,16 +88,13 @@ export class TicketsService {
       await transactionManager.save(newTicket);
 
       return {
-        message: "예매가 완료되었습니다.",
-        data: {
-          id: newTicket.id,
-          name: targetPerformance.name,
-          category: targetPerformance.category,
-          seat_id: targetSeat.id,
-          seat_price: targetSeat.price,
-          location: targetPerformance.location,
-          perf_startTime: targetPerformance.perf_startTime,
-        },
+        id: newTicket.id,
+        name: targetPerformance.name,
+        category: targetPerformance.category,
+        seat_id: targetSeat.id,
+        seat_price: targetSeat.price,
+        location: targetPerformance.location,
+        perf_startTime: targetPerformance.perf_startTime,
       };
     } catch (error) {
       if (

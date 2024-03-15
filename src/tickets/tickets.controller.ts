@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
   Get,
+  HttpStatus,
 } from "@nestjs/common";
 import { TicketsService } from "./tickets.service";
 import { Users } from "src/users/entities/users.entity";
@@ -42,18 +43,29 @@ export class TicketsController {
     @Param("seatId") seatId: number,
     @GetUserInfo() user: Users,
   ) {
-    return await this.ticketsService.createTickets(
+    const data = await this.ticketsService.createTickets(
       performanceId,
       seatId,
       user,
       transactionManager,
     );
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "공연 예매에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiBearerAuth("access-token")
   @ApiOperation({ summary: "userId의 예매 내역 목록 조회 API" })
   @Get("/history")
   async getTicketsHistory(@GetUserInfo() user: Users) {
-    return await this.ticketsService.getTicketsHistory(user);
+    const data = await this.ticketsService.getTicketsHistory(user);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "예매 내역 조회에 성공하였습니다.",
+      data,
+    };
   }
 }

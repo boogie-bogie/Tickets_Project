@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 
 import { Role } from "../types/usersRole.type";
-import { Points } from "src/points/entities/point.entity";
+import { Points } from "src/users/entities/point.entity";
 import { Tickets } from "src/tickets/entities/ticket.entity";
 
 @Index("email", ["email"], { unique: true })

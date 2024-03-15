@@ -5,7 +5,6 @@ import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { PerformanceModule } from "./performance/performance.module";
-import { PointsModule } from "./points/points.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { TicketsModule } from "./tickets/tickets.module";
 import { ConfigModuleValidationSchema } from "./config/env-validation.config";
@@ -26,7 +25,6 @@ import { typeOrmModuleOptions } from "./config/database.config";
     AuthModule,
     UsersModule,
     PerformanceModule,
-    PointsModule,
     TicketsModule,
   ],
   controllers: [],

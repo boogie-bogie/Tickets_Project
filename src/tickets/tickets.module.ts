@@ -6,8 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { PerformanceModule } from "src/performance/performance.module";
 import { Performance } from "src/performance/entities/performance.entity";
 import { Seats } from "src/performance/entities/seat.entity";
-import { Points } from "src/points/entities/point.entity";
-import { PointsModule } from "src/points/points.module";
+import { Points } from "src/users/entities/point.entity";
 import { UsersModule } from "src/users/users.module";
 import { Users } from "src/users/entities/users.entity";
 
@@ -16,7 +15,6 @@ import { Users } from "src/users/entities/users.entity";
     TypeOrmModule.forFeature([Tickets, Performance, Seats, Users, Points]),
     PerformanceModule,
     UsersModule,
-    PointsModule,
   ],
   controllers: [TicketsController],
   providers: [TicketsService],

@@ -33,7 +33,6 @@
 ├── src
 │   ├── auth
 │   ├── performance
-│   ├── points
 │   ├── tickets
 │   ├── users
 │   ├── utils

@@ -6,13 +6,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Users } from "./entities/users.entity";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./users.service";
-import { PointsModule } from "src/points/points.module";
-import { Points } from "src/points/entities/point.entity";
+import { Points } from "src/users/entities/point.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Users, Points]),
-    PointsModule,
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>("JWT_SECRET_KEY"),
