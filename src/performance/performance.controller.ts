@@ -105,6 +105,13 @@ export class PerformanceController {
   @ApiParam({ name: "id", required: true, description: "performanceId" })
   @Get("/:id")
   async getPerformanceDetails(@Param("id") id: number) {
-    return await this.performanceService.getPerformanceDetails(id);
+    const data = await this.performanceService.getPerformanceDetails(id);
+
+    const message = ` 공연명: '${data.name}', 현재 ${data.AvailableSeatsCount}석 예매 가능`;
+    return {
+      statusCode: HttpStatus.OK,
+      message: message,
+      data,
+    };
   }
 }

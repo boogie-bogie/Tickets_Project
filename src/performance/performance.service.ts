@@ -109,29 +109,20 @@ export class PerformanceService {
       where: { perf_id: id, ticket_id: null, status: SeatsStatus.Empty },
     });
 
-    /**예약 가능한 좌석의 id와 price를 배열 형태로 매핑해서 가져온다.
-     * 예시 - 등급은 제외
-     * [ { seat_num: 32, grade: B, price: 30000}, { seat_num: 290, grade: A, price: 40000}, … ]
-     */
     const isAvailableSeatsInfo = seats.map((seat) => ({
       id: seat.id,
       price: seat.price,
     }));
 
-    const message = ` 공연명: '${performance.name}', 현재 ${seats.length}석 예매 가능`;
-
     return {
-      message: message,
-      data: {
-        id: performance.id,
-        name: performance.name,
-        category: performance.category,
-        image: performance.image,
-        location: performance.location,
-        perf_startTime: performance.perf_startTime,
-        AvailableSeatsCount: seats.length,
-        AvailableSeatsInfo: isAvailableSeatsInfo,
-      },
+      id: performance.id,
+      name: performance.name,
+      category: performance.category,
+      image: performance.image,
+      location: performance.location,
+      perf_startTime: performance.perf_startTime,
+      AvailableSeatsCount: seats.length,
+      AvailableSeatsInfo: isAvailableSeatsInfo,
     };
   }
 }
