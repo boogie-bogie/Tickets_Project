@@ -18,8 +18,8 @@ export class CreatePerformanceDto {
   name: string;
 
   @IsString()
-  @MinLength(10, {
-    message: "공연에 대한 설명은 최소 10글자 이상이어야 합니다.",
+  @MinLength(8, {
+    message: "공연에 대한 설명은 최소 8글자 이상이어야 합니다.",
   })
   @IsNotEmpty({ message: "공연에 대한 설명을 입력해주세요." })
   description: string;

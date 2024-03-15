@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Max } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, Max } from "class-validator";
 import { SeatsStatus } from "../types/seatsRow.type";
 
 export class CreateSeatsDto {

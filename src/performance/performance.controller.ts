@@ -23,7 +23,6 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiRequestTimeoutResponse,
   ApiTags,
 } from "@nestjs/swagger";
 import { FindAllPerformancesDto } from "./dto/findAll-performance.dto";
