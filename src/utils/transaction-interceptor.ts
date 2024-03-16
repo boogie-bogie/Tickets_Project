@@ -19,7 +19,7 @@ export class TransactionInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await queryRunner.startTransaction("REPEATABLE READ"); // REPEATABLE READ 격리 수준 설정
 
     const request = context.switchToHttp().getRequest();
     request.queryRunnerManager = queryRunner.manager;

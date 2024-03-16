@@ -58,10 +58,10 @@ jobs:
           script: |
             # 프로젝트 디렉토리로 이동
             cd /home/ubuntu/Tickets_project
-            
+
             # GitHub에서 최신 코드를 가져옴
             git pull
-            
+
             # .env 파일 생성
             echo "DB_NAME=${{ secrets.DB_NAME }}" > .env
             echo "DB_SYNC=${{ secrets.DB_SYNC }}" >> .env
