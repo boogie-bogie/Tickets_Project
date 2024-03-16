@@ -45,20 +45,31 @@ export class UsersController {
     @TransactionManager() transactionManager: EntityManager,
     @Body() createUserDto: CreateUserDto,
   ) {
-    return await this.userService.signup(
+    const data = await this.userService.signup(
       createUserDto.email,
       createUserDto.password,
       createUserDto.name,
       transactionManager,
     );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "회원가입에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiOperation({ summary: "로그인 API" })
   @Post("/login")
-  async login(
-    @Body() loginDto: LoginDto,
-  ): Promise<{ message: string; accessToken: string; refreshToken: string }> {
-    return await this.userService.login(loginDto.email, loginDto.password);
+  async login(@Body() loginDto: LoginDto) {
+    const data = await this.userService.login(
+      loginDto.email,
+      loginDto.password,
+    );
+    return {
+      statusCode: HttpStatus.OK,
+      message: "로그인에 성공하였습니다.",
+      data,
+    };
   }
 
   @ApiOperation({ summary: "사용자 정보 조회 API" })

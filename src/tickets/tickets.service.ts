@@ -24,22 +24,21 @@ export class TicketsService {
     private readonly entityManager: EntityManager,
   ) {}
 
-      /** 
-       * 1. 비관적 읽기 락: 트랜잭션이 읽는 데이터를 해당 트랜잭션이 종료될 때까지 다른 트랜잭션의 읽기는 허용하되, 쓰기(또는 수정)은 방지
-       * 2. 비관적 쓰기 락: 트랜잭션이 읽은 데이터를 해당 트랜잭션이 종료될 때까지 다른 트랜잭션이 읽기, 쓰기, 수정하는 것을 방지하며 접근 차단
-       * 3. 더티 리드: SERIALIZABLE isolation level에서 사용되는 Lock 모드로, 다른 트랜잭션이 커밋되지 않은 데이터를 읽는 것을 허용. 다른 트랜잭션이 롤백할 경우, 읽은 데이터는 실제로 존재하지 않았던 것으로 간주
-       * 
-       ** 명시적 Locking 사용
-       *
-       * 4. 키 업데이트 없음: 엔티티의 키에 대한 업데이트 방지. 키 필드가 변경되면 해당 엔티티의 저장이 실패
-       * 5. 키 공유: 읽기 작업에 대한 Lock을 걸지 않고, 엔티티의 키만을 공유 Lock으로 설정. 다른 트랜잭션이 해당 엔티티를 읽는 것을 허용하지만, 키에 대한 수정을 제한.
-       */
-      // .setLock("pessimistic_read")
-      // .setLock("pessimistic_write")
-      // .setLock('dirty_read')
-      //.setLock('for_no_key_update')
-      // .setLock('for_key_share')
-
+  /**
+   * 1. 비관적 읽기 락: 트랜잭션이 읽는 데이터를 해당 트랜잭션이 종료될 때까지 다른 트랜잭션의 읽기는 허용하되, 쓰기(또는 수정)은 방지
+   * 2. 비관적 쓰기 락: 트랜잭션이 읽은 데이터를 해당 트랜잭션이 종료될 때까지 다른 트랜잭션이 읽기, 쓰기, 수정하는 것을 방지하며 접근 차단
+   * 3. 더티 리드: SERIALIZABLE isolation level에서 사용되는 Lock 모드로, 다른 트랜잭션이 커밋되지 않은 데이터를 읽는 것을 허용. 다른 트랜잭션이 롤백할 경우, 읽은 데이터는 실제로 존재하지 않았던 것으로 간주
+   *
+   ** 명시적 Locking 사용
+   *
+   * 4. 키 업데이트 없음: 엔티티의 키에 대한 업데이트 방지. 키 필드가 변경되면 해당 엔티티의 저장이 실패
+   * 5. 키 공유: 읽기 작업에 대한 Lock을 걸지 않고, 엔티티의 키만을 공유 Lock으로 설정. 다른 트랜잭션이 해당 엔티티를 읽는 것을 허용하지만, 키에 대한 수정을 제한.
+   */
+  // .setLock("pessimistic_read")
+  // .setLock("pessimistic_write")
+  // .setLock('dirty_read')
+  //.setLock('for_no_key_update')
+  // .setLock('for_key_share')
 
   async createTickets(
     performanceId: number,
@@ -48,12 +47,8 @@ export class TicketsService {
     transactionManager: EntityManager,
   ) {
     try {
-
-      // await transactionManager.query(`SET TRANSACTION ISOLATION LEVEL REPEATABLE READ`);
-
-
       // 공연 조회
-      const targetPerformance = await transactionManager // await queryRunner.getRepository(USers).save()
+      const targetPerformance = await transactionManager
         .createQueryBuilder()
         .select("performance")
         .from(Performance, "performance")
@@ -64,8 +59,8 @@ export class TicketsService {
         throw new NotFoundException("존재하지 않는 공연입니다.");
       }
 
-
       // 좌석 조회 및 잠금
+
       const targetSeat = await transactionManager
         .createQueryBuilder(Seats, "seat")
         .setLock("pessimistic_write")

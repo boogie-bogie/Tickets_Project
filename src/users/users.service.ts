@@ -57,7 +57,12 @@ export class UsersService {
       });
 
       // throw new NotFoundException('트랜잭션 롤백 테스트')
-      return { message: "회원가입에 성공하였습니다." };
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        points: defaultPoints,
+      };
     } catch (error) {
       throw new InternalServerErrorException(
         "사용자 등록 중 오류가 발생했습니다.",
@@ -65,10 +70,7 @@ export class UsersService {
     }
   }
 
-  async login(
-    email: string,
-    password: string,
-  ): Promise<{ message: string; accessToken: string; refreshToken: string }> {
+  async login(email: string, password: string) {
     try {
       const user = await this.userRepository.findOne({
         select: ["id", "email", "password"],
@@ -87,7 +89,10 @@ export class UsersService {
       const accessToken = this.jwtService.sign(payload, { expiresIn: "1d" });
       const refreshToken = this.jwtService.sign(payload, { expiresIn: "7d" });
 
-      return { message: `로그인에 성공하였습니다`, accessToken, refreshToken };
+      return {
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
       console.log("error:", error);
       throw new UnauthorizedException("로그인 실패");
